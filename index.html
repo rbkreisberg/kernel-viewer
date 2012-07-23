@@ -13,5 +13,15 @@
   </button><p />
 </div>
 <script src="js/stream.js"></script>
+<div id="data_log" style="height:400px;width:800px;overflow:auto;border:1px solid rgb(0, 0, 0)">
+    </div>
+    <script type="text/javascript">
+    $('#data_log').on('data_update',function(e,data,timestamp) { 
+        $(this).html($(this).html() + 'Timestamp: ' + timestamp + ', Data: ' + JSON.stringify(data) + '<br/>');
+        console.log('ping!');
+    })
+
+    start_streaming_data('data_log');
+    </script>
     </body>
 </html>

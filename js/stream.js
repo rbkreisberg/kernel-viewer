@@ -1,7 +1,42 @@
+
+
+/* Inspired by Lee Byron's test data generator. */
+var stream_layers = function(n, m, o) {
+  if (arguments.length < 3) o = 0;
+  function bump(a) {
+    var x = 1 / (.1 + Math.random()),
+        y = 2 * Math.random() - .5,
+        z = 10 / (.1 + Math.random());
+    for (var i = 0; i < m; i++) {
+      var w = (i / m - y) * z;
+      a[i] += x * Math.exp(-w * w);
+    }
+  }
+  return d3.range(n).map(function() {
+      var a = [], i;
+      for (i = 0; i < m; i++) a[i] = o + o * Math.random();
+      for (i = 0; i < 5; i++) bump(a);
+      return a.map(stream_index);
+    });
+};
+
+/* Another layer generator using gamma distributions. */
+var stream_waves = function(n, m) {
+  return d3.range(n).map(function(i) {
+    return d3.range(m).map(function(j) {
+        var x = 20 * j / m - i / 3;
+        return 2 * x * Math.exp(-.5 * x);
+      }).map(stream_index);
+    });
+};
+
 var n = 20, // number of layers
     m = 200, // number of samples per layer
+    generators = [stream_layers,stream_waves],
+    gIndex = 0,
+    generator = generators[gIndex],
     data0 = d3.layout.stack().offset("wiggle")(stream_layers(n, m)),
-    data1 = d3.layout.stack().offset("wiggle")(stream_layers(n, m)),
+    data1 = d3.layout.stack().offset("wiggle")(stream_waves(n, m)),
     color = d3.interpolateRgb("#aad", "#556");
 
 var width = 960,
@@ -30,6 +65,9 @@ vis.selectAll("path")
     .attr("d", area);
 
 function transition() {
+  gIndex = ++gIndex >= generators.length ? 0 : gIndex;
+  generator = generators[gIndex];
+  
   d3.selectAll("path")
       .data(function() {
         var d = data1;
@@ -41,36 +79,14 @@ function transition() {
       .attr("d", area);
 }
 
-/* Inspired by Lee Byron's test data generator. */
-function stream_layers(n, m, o) {
-  if (arguments.length < 3) o = 0;
-  function bump(a) {
-    var x = 1 / (.1 + Math.random()),
-        y = 2 * Math.random() - .5,
-        z = 10 / (.1 + Math.random());
-    for (var i = 0; i < m; i++) {
-      var w = (i / m - y) * z;
-      a[i] += x * Math.exp(-w * w);
-    }
-  }
-  return d3.range(n).map(function() {
-      var a = [], i;
-      for (i = 0; i < m; i++) a[i] = o + o * Math.random();
-      for (i = 0; i < 5; i++) bump(a);
-      return a.map(stream_index);
-    });
-}
-
-/* Another layer generator using gamma distributions. */
-function stream_waves(n, m) {
-  return d3.range(n).map(function(i) {
-    return d3.range(m).map(function(j) {
-        var x = 20 * j / m - i / 3;
-        return 2 * x * Math.exp(-.5 * x);
-      }).map(stream_index);
-    });
-}
-
 function stream_index(d, i) {
   return {x: i, y: Math.max(0, d)};
+}
+
+function start_streaming_data(element){
+  var timestamp = 0;
+  setInterval(function() { 
+    var data = generator(n,1);
+    $('#'+element).trigger('data_update',[data, ++timestamp]);
+  }, 1000);
 }
