@@ -1,71 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html>    
     <head>
-        <title>Streamgraph example</title>
-        <script src="js/d3.v2.js"></script>
-        <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
-        <script src="js/colorbrewer.js"></script>
-    </head>
+        <title>
+            Streamgraph example
+        </title>
+        <script src="js/d3.v2.js">
+        </script>
+        <script src="http://code.jquery.com/jquery-1.7.2.js">
+        </script>
+        <script src="js/colorbrewer.js">
+        </script>
+        <script src="js/stream.js">
+        </script>
+    </head>    
     <body>
-		<div class='gallery' id='chart'>
-			<button class='first last' onclick='transition()'>
-				Update
-			</button><p />		
-			
-			<script type="text/javascript">
-			//Assumes list of colors is passed in as a string
-			function colorChange(value){
-				var array = []
-				var startInt = 0
-				for (i = 0; i <= value.length; i++){
-					if (value.charAt(i) == ')'){
-						array.push(value.substring(startInt, i+1))
-						startInt = i + 2
-					}
-				}
-				document.getElementById('c1').style.background = array[0]
-				document.getElementById('c2').style.background = array[1]
-				document.getElementById('c3').style.background = array[2]
-				document.getElementById('c4').style.background = array[3]
-				document.getElementById('c5').style.background = array[4]
-			}
-			</script>
-			<form>
-				<select id='colorList' onChange='colorChange(value)'>
-				<!-- Filled from colorbrewer.js -->
-				</select>
-			</form>
-			
-			<div>
-			<div id='c1' style='height:25px; width:25px; background-color:white;'></div>
-			<div id='c2' style='height:25px; width:25px; background-color:white;'></div>
-			<div id='c3' style='height:25px; width:25px; background-color:white;'></div>
-			<div id='c4' style='height:25px; width:25px; background-color:white;'></div>
-			<div id='c5' style='height:25px; width:25px; background-color:white;'></div>
-			</div>
+        <div class='gallery' id='chart'>
+            <button class='first last' onclick='transition()'>
+                Update
+            </button>
+            <p />
+        </div>
+        <br>
+        <div id="data_log" style="height:400px;width:800px;overflow:auto;border:1px solid rgb(0, 0, 0)">
+        </div>
+        <script type="text/javascript">
+        function start_streaming_data(element) {
+    		var timestamp = 0;
+		    setInterval(function() {
+		        var data = generator(n, 1);
+		        $('#' + element).trigger('data_update', [data, ++timestamp]);
+		    }, 1000);
+		}
 
-			<script type="text/javascript">
-			for (var key in colorbrewer){
-				if (colorbrewer[key].type == "qual"){
-					var option = document.createElement("option")
-					option.text = key
-					option.value = colorbrewer[key][5]
-					document.getElementById('colorList').add(option,document.getElementById('colorList').options[null])
-				}
+		$('#data_log').on('data_update', function(e, data, timestamp) {
+		    $(this).html($(this).html() + 'Timestamp: ' + timestamp + ', Data: ' + JSON.stringify(data) + '<br/>');
+		});
+		start_streaming_data('data_log');
+        </script>
+        <form>
+            <select id='colorList' onChange='colorChange(value)'>
+                <!-- Filled from colorbrewer.js -->
+            </select>
+        </form>
+        <div>
+            <div id='c1' style='height:25px; width:25px; background-color:white;'>
+            </div>
+            <div id='c2' style='height:25px; width:25px; background-color:white;'>
+            </div>
+            <div id='c3' style='height:25px; width:25px; background-color:white;'>
+            </div>
+            <div id='c4' style='height:25px; width:25px; background-color:white;'>
+            </div>
+            <div id='c5' style='height:25px; width:25px; background-color:white;'>
+            </div>
+        </div>
+        <script type="text/javascript">
+        	array = [];
+			for (var key in colorbrewer) {
+			    if (colorbrewer[key].type == "qual") {
+			        var option = document.createElement("option");
+			        option.text = key;
+			        option.value = colorbrewer[key][5];
+			        document.getElementById('colorList').add(option, document.getElementById('colorList').options[null]);
+			    }
 			}
-			colorChange(document.getElementById('colorList').options[0].value)
-			</script>
-		</div>
-		<br>
-		<script src="js/stream.js"></script>
-		
-		<div id="data_log" style="height:400px;width:800px;overflow:auto;border:1px solid rgb(0, 0, 0)"></div>
-	    <script type="text/javascript">
-	    $('#data_log').on('data_update',function(e,data,timestamp) { 
-	        $(this).html($(this).html() + 'Timestamp: ' + timestamp + ', Data: ' + JSON.stringify(data) + '<br/>');
-	        console.log('ping!');
-	    })	
-	    start_streaming_data('data_log');
-	    </script>	    
+			colorChange(document.getElementById('colorList').options[0].value);
+
+			function colorChange(value) {
+			    array = [];
+			    var startInt = 0;
+			    var i;
+			    var list = value.split(",");
+			    for (i = 0; i <= value.length; i++) {
+			        if (value.charAt(i) == ')') {
+			            array.push(value.substring(startInt, i + 1));
+			            startInt = i + 2;
+			        }
+			    }
+			    document.getElementById('c1').style.background = array[0]
+			    document.getElementById('c2').style.background = array[1]
+			    document.getElementById('c3').style.background = array[2]
+			    document.getElementById('c4').style.background = array[3]
+			    document.getElementById('c5').style.background = array[4]
+			    if ($('#chart svg').length > 0) {
+			        alter_color();
+			    }
+			}
+			render_streamgraph();
+        </script>
     </body>
 </html>

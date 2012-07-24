@@ -30,7 +30,9 @@ var stream_waves = function(n, m) {
     });
 };
 
-var n = 20, // number of layers
+
+
+var n = 5, // number of layers
     m = 200, // number of samples per layer
     generators = [stream_layers,stream_waves],
     gIndex = 0,
@@ -53,16 +55,30 @@ var area = d3.svg.area()
     .y0(function(d) { return height - d.y0 * height / my; })
     .y1(function(d) { return height - (d.y + d.y0) * height / my; });
 
-var vis = d3.select("#chart")
-  .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+function render_streamgraph() {
+  var vis = d3.select("#chart")
+    .append("svg")
+      .attr("width", width)
+      .attr("height", height);
 
-vis.selectAll("path")
+    vis.selectAll("path")
     .data(data0)
   .enter().append("path")
-    .style("fill", function() { return color(Math.random()); })
+    .style("fill", function(d,i) { 
+      return array[i]; 
+    })
     .attr("d", area);
+  }
+ 
+function alter_color() {
+  d3.select("#chart svg").selectAll("path")
+  .transition()
+  .duration(1000)
+  .style('fill',function(d,i) { 
+      return array[i]; 
+    });
+}
+
 
 function transition() {
   gIndex = ++gIndex >= generators.length ? 0 : gIndex;
@@ -83,10 +99,3 @@ function stream_index(d, i) {
   return {x: i, y: Math.max(0, d)};
 }
 
-function start_streaming_data(element){
-  var timestamp = 0;
-  setInterval(function() { 
-    var data = generator(n,1);
-    $('#'+element).trigger('data_update',[data, ++timestamp]);
-  }, 1000);
-}
