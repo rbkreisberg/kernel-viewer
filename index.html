@@ -49,10 +49,9 @@
 			    var elements = ['c1','c2','c3','c4','c5']
 			    var color_scale = colorbrewer[value][5];
 			    var scale_length = color_scale.length;
-			    var color;
 			    array = new Array(scale_length);
-			    for ( var i = 0; color=color_scale[i], i < scale_length; ++i) {
-			              $('#'+elements[i]).css('background-color', (array[i] = color));
+			    for ( var i = 0; i < scale_length; ++i) {
+			              $('#'+elements[i]).css('background-color', (array[i] = color_scale[i]));
 			    }    			  
 			    if ($('#chart svg').length > 0) {
 			        alter_color();
