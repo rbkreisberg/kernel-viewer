@@ -51,7 +51,7 @@ var width = 960,
     });
 
 var area = d3.svg.area()
-    .x(function(d) { return d.x * width / mx; })
+    .x(function(d,i) { return i * width / mx; })
     .y0(function(d) { return height - d.y0 * height / my; })
     .y1(function(d) { return height - (d.y + d.y0) * height / my; });
 
@@ -73,7 +73,7 @@ function render_streamgraph(color_scheme) {
 function alter_color(color_scheme) {
   d3.select("#chart svg").selectAll("path")
   .transition()
-  .duration(1000)
+  .duration(50)
   .style('fill',function(d,i) { 
       return color_scheme[i]; 
     });
@@ -85,13 +85,14 @@ function transition() {
   generator = generators[gIndex];
   
   d3.selectAll("path")
-      .data(function() {
-        var d = data1;
-        data1 = data0;
-        return data0 = d;
-      })
+//      .data(function() {
+//        var d = data1;
+//        data1 = data0;
+//        return data0 = d;
+//      })
+  	.data(data0)
     .transition()
-      .duration(2500)
+      .duration(50)
       .attr("d", area);
 }
 

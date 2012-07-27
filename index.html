@@ -59,19 +59,25 @@
 			//Initial render
 			render_streamgraph(colorbrewer[document.getElementById('colorList').options[0].value][5]);
         </script>
-         <div id="data_log" style="height:400px;width:800px;overflow:auto;border:1px solid rgb(0, 0, 0)">
+        <div id="data_log" style="height:400px;width:800px;overflow:auto;border:1px solid rgb(0, 0, 0)">
         </div>
         <script type="text/javascript">
         function start_streaming_data(element) {
     		var timestamp = 0;
 		    setInterval(function() {
-		        var data = generator(n, 1);
+		        var data = d3.layout.stack().offset("wiggle")(generator(n, 1));
+		        var size = data0[0].length
+		        for (var i = 0; i < n; i++){
+					data0[i].shift();
+					data0[i].push(data[i][0]);
+		        }
 		        $('#' + element).trigger('data_update', [data, ++timestamp]);
 		    }, 1000);
 		}
 
 		$('#data_log').on('data_update', function(e, data, timestamp) {
 		    $(this).html($(this).html() + 'Timestamp: ' + timestamp + ', Data: ' + JSON.stringify(data) + '<br/>');
+			transition();
 		});
 		start_streaming_data('data_log');
         </script> 
