@@ -9,6 +9,19 @@ function dataGen(size, xrange, yrange){
 	return points;
 }
 
+function dataGenGaussian2D(size, mean, variance){
+	var gaussian = science.stats.distribution.gaussian();
+	gaussian.mean(mean);
+	gaussian.variance(variance);
+	var points = [];
+	for (var i = 0; i < size; i++){
+		var x = gaussian();
+		var y = gaussian();
+		points.push([x,y]);
+	}
+	return points;
+}
+
 function plotPoints(points){
 	var svg = d3.select("body").append("svg");
 	 svg.selectAll(".circle")

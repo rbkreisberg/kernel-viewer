@@ -14,15 +14,18 @@
         </script>
         <script src="js/datagen.js">
         </script>
+        <script src="assets/science.v1.js">
+        </script>
     </head>    
     <body>
-   		<button onclick='transition()'>
+   		<button onclick='rotateHeart(heart, 90)'>
         	Update
     	</button>
     	<script type="text/javascript">
-    	//plotHeart(makeHeart(100, 250, 250));
-    	//plotHeart(makeHeart(10, 250, 250, 1));
-    	plotPoints(dataGen(1000,750,750));
+    	//var heart = plotHeart(makeHeart(100),250,250);
+    	//plotHeart(makeHeart(100), 250, 250);
+    	//plotHeart(makeHeart(10), 250, 250);
+    	plotPoints(dataGenGaussian2D(1000,400,2000));
 		</script>
     </body>
 </html>
