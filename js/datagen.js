@@ -9,15 +9,18 @@ function dataGen(size, xrange, yrange){
 	return points;
 }
 
-function dataGenGaussian2D(size, mean, variance){
+function dataGenGaussian(size, mean, variance, dimensions){
 	var gaussian = science.stats.distribution.gaussian();
 	gaussian.mean(mean);
 	gaussian.variance(variance);
 	var points = [];
 	for (var i = 0; i < size; i++){
-		var x = gaussian();
-		var y = gaussian();
-		points.push([x,y]);
+		var coords = []
+		for (var j = 0; j < dimensions; j++){
+			var temp = gaussian();
+			coords.push(temp);
+		}
+		points.push(coords);
 	}
 	return points;
 }
@@ -32,4 +35,15 @@ function plotPoints(points){
 	 .attr("cy", function(point) {return point[1];})
 	 .attr("r", 1)
 	 .style("fill", "black");
+}
+
+function createKDE(points){
+	var kde = science.stats.kde();
+	kde.sample(points);
+	console.log(kde.bandwidth());
+	var newPoints = [];
+	for (var i = 0; i < 1; i += .01){
+		newPoints.push(i);
+	}
+	return kde(newPoints);
 }
