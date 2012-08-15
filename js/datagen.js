@@ -31,6 +31,13 @@ function plotViolin(points){
     	kde[i][1] = kde[i][1] * 10000; //Adds visibility to KDE rendering
 	}
 	var median = (points.sort())[points.length / 2];
+	var scale = d3.scale.linear()
+		.domain([-1,1])
+		.range([0,200]);
+	var xAxis = d3.svg.axis()
+		.orient("bottom")
+		.tickValues([-1,0,1])
+		.scale(scale);
 	var svg = d3.select("body").append("svg");
 	 svg.append("g")
 	 	.attr("transform","scale(-1,1) rotate(90) translate(0,100) scale(.5)")
@@ -64,17 +71,6 @@ function plotViolin(points){
 	    .attr("cy", function(point) {return point[1];})
 	    .attr("r", 1)
 	    .style("fill", "black");
-	 var diff = 1000000;
-	 var res = 0;
-	 for (var i = 0; i < kde.length; i++){
-		 var x = kde[i][0];
-		 console.log(Math.abs(x - median) < diff);
-		 if (Math.abs(x - median) < diff){
-			 diff = Math.abs(x - median);
-			 res = i;
-		 }
-	 }
-	 console.log(res);
 	 svg.append("line")
 	 	.attr("x1",median)
 	 	.attr("x2",median)
@@ -82,6 +78,12 @@ function plotViolin(points){
 	 	.attr("y2",100)
 	 	.style("stroke","black")
 	 	.attr("transform","scale(-1,1) rotate(90) translate(0,100) scale(.5)");
+	 svg.append("g")
+	 	.style("fill","none")
+	 	.style("stroke","black")
+	 	.style("shape-rendering","crispEdges")
+	 	.attr("transform","translate(0,450)")
+	 	.call(xAxis);
 }
 
 function createKDE(points){
