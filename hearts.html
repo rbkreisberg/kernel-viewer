@@ -21,8 +21,8 @@
     	//var heart = plotHeart(makeHeart(100),250,250);
     	//plotHeart(makeHeart(100), 250, 250);
     	//plotHeart(makeHeart(10), 250, 250);
-    	var data = dataGenGaussian(1000,400,500,1);
-    	plotViolin(data);
+    	var plot = new violinPlot();
+    	plot.render(d3.select("body")); 
 		</script>
     </body>
 </html>
