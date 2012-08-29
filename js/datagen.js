@@ -29,15 +29,18 @@ function dataGenGaussian(size, mean, variance){
 violinPlot = function(){
 	var data = dataGenGaussian(1000,400,400),
 		kde = createKDE(data),
+		height = 300,
+		width = 800,
+		numArrays = 1,
 		yScale = d3.scale.linear()
 			.domain([-1 * d3.max(kde, function(a){return a[1];})
 			         , d3.max(kde, function(a){return a[1];})])
-			.rangeRound([0,400]),
+			.rangeRound([0,height]),
 		median = science.stats.median(data),
 		xScale = d3.scale.linear()
 			.domain([d3.min(kde, function(a){return a[0];})
 			         ,d3.max(kde, function(a){return a[0];})])
-			.range([0,200]),
+			.range([0,width/numArrays]),
 		xAxis = d3.svg.axis()
 			.scale(xScale)
 			.orient("bottom")
@@ -48,15 +51,17 @@ violinPlot = function(){
 			.ticks(4),
 		xPadding = 50,
 		yPadding = 0,
-		height = null,
-		width = null,
 		renderColor = "orange",
 		renderMedian = true,
 		renderPoints = false,
 		multipleArrays = false;
 
+	/**
+	  @param {data} x - Pass in either an array of data or an array of arrays of data.
+	 */
 	violinPlot.data = function(x){
 		if (!arguments.length) return data;
+		numArrays = x.length + 1;
 		if (x[0] instanceof Array){
 			kdeArray = [];
 			medianArray = [];
@@ -69,6 +74,7 @@ violinPlot = function(){
 			kde = kdeArray;
 			median = medianArray;
 			multipleArrays = true;
+			xScale.range([0, width/numArrays]);
 			return data;
 		}
 		data = x;
@@ -165,20 +171,19 @@ violinPlot = function(){
 	}
 	
 	/**
-	 	Renders the violin plot.
-	 	@param {HTML Object} x - The container in which the plot is rendered. If no container is passed in, the plot is rendered in the body.
+	 	Renders the violin plot in the passed in container. If no container is passed in, the plot is rendered in the body.
+	 	@param {HTML Object} x - The container in which the plot is rendered.
 	 */
 	violinPlot.render = function(x){
 		var root = d3.select("body");
-		if (arguments.length) root = d3.select("#" + x);
-		var plots = 1;
-		if (multipleArrays) plots = data.length;
+		if (arguments.length) root = d3.select("#" + x)
 		var translateFactor = xScale.range()[1];
 		//Creates the frame within which the objects are rendered
-		var frame = root.append("svg").append("g");
+		var frame = root.append("svg")
+			.attr("height",height)
+			.attr("width",width);
 		//If height and width modifiers are defined, scales object by those modifiers
-		if (height && width) frame.attr("transform","scale(" + (width / $("#" + x).width()) +","+ (height / $("#" + x).height()) + ")");
-		for (var i = 0; i < plots; i++){
+		for (var i = 0; i < numArray; i++){
 			var plotKDE = kde;
 			var plotData = data;
 			var plotMedian = median;
