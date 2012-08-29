@@ -1,0 +1,45 @@
+<dl class="details">
+	<?js 
+		if (this.version) {
+			print( '<dt>Version:</dt>') ;
+			print( '<dd>'+version+'</dd>' );
+		}
+
+		if (this.since) {
+			print( '<dt>Since:</dt>') ;
+			print( '<dd>'+since+'</dd>' );
+		}
+
+		if (this.deprecated) {
+			print( '<dt class="important">Deprecated') ;
+			if (this.deprecated === true) print('</dt><dd class="yes-def">Yes</dd>');
+            else print(':</dt><dd>'+this.deprecated+'</dd>');
+		}
+
+		if (this.author) {
+			print( '<dt>Since:</dt>') ;
+			print( '<dd>'+author+'</dd>' );
+		}
+
+		if (this.copyright) {
+			print( '<dt>Copyright:</dt>') ;
+			print( '<dd>'+copyright+'</dd>' );
+		}
+
+		if (this.license) {
+			print( '<dt>License:</dt>') ;
+			print( '<dd>'+license+'</dd>' );
+		}
+	
+		if (this.see && see.length) {
+			print( '<dt>See:</dt>') ;
+			print( '<dd><ul>' );
+
+            see.forEach(function(s) {
+                print('<li>'+linkto(s)+'</li>');
+            });
+
+			print( '</ul></dd>' );
+		}
+	?>
+</dl>

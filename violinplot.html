@@ -12,6 +12,7 @@
         <script src="assets/science.v1.js"></script>
     </head>    
     <body>
+    	<div id='render'></div>
    		<!--
    		<button onclick='rotateHeart(heart, 90)'>
         	Update
@@ -21,10 +22,13 @@
     	//var heart = plotHeart(makeHeart(100),250,250);
     	//plotHeart(makeHeart(100), 250, 250);
     	//plotHeart(makeHeart(10), 250, 250);
+    	var data = [];
+    	for (var i = 0; i < 5; i++){
+        	data.push(dataGenGaussian(1000,400, 400));
+    	}
     	var plot = new violinPlot();
-    	plot.renderColor("yellow");
-    	plot.yPadding(10);
-    	plot.render(d3.select("body")); 
+    	plot.data(data);
+    	plot.render('render');
 		</script>
     </body>
 </html>
