@@ -1,5 +1,3 @@
-
-
 /* Inspired by Lee Byron's test data generator. */
 var stream_layers = function(n, m, o) {
   if (arguments.length < 3) o = 0;
@@ -51,11 +49,11 @@ var width = 960,
     });
 
 var area = d3.svg.area()
-    .x(function(d) { return d.x * width / mx; })
+    .x(function(d,i) { return i * width / mx; })
     .y0(function(d) { return height - d.y0 * height / my; })
     .y1(function(d) { return height - (d.y + d.y0) * height / my; });
 
-function render_streamgraph() {
+function render_streamgraph(color_scheme) {
   var vis = d3.select("#chart")
     .append("svg")
       .attr("width", width)
@@ -65,17 +63,17 @@ function render_streamgraph() {
     .data(data0)
   .enter().append("path")
     .style("fill", function(d,i) { 
-      return array[i]; 
+      return color_scheme[i]; 
     })
     .attr("d", area);
   }
  
-function alter_color() {
+function alter_color(color_scheme) {
   d3.select("#chart svg").selectAll("path")
   .transition()
-  .duration(1000)
+  .duration(50)
   .style('fill',function(d,i) { 
-      return array[i]; 
+      return color_scheme[i]; 
     });
 }
 
@@ -85,17 +83,17 @@ function transition() {
   generator = generators[gIndex];
   
   d3.selectAll("path")
-      .data(function() {
-        var d = data1;
-        data1 = data0;
-        return data0 = d;
-      })
+//      .data(function() {
+//        var d = data1;
+//        data1 = data0;
+//        return data0 = d;
+//      })
+  	.data(data0)
     .transition()
-      .duration(2500)
+      .duration(50)
       .attr("d", area);
 }
 
 function stream_index(d, i) {
   return {x: i, y: Math.max(0, d)};
 }
-
