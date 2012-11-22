@@ -34,7 +34,6 @@
 			<div id='c5' style='height:25px; width:25px; background-color:white;'></div>
 		</div>
         <script type="text/javascript">
-        	array = [];
 			for (var key in colorbrewer) {
 			    if (colorbrewer[key].type == "qual") {
 			        var option = document.createElement("option");
@@ -49,29 +48,36 @@
 			    var elements = ['c1','c2','c3','c4','c5']
 			    var color_scale = colorbrewer[value][5];
 			    var scale_length = color_scale.length;
-			    array = new Array(scale_length);
+			    var color_scheme = new Array(scale_length);
 			    for ( var i = 0; i < scale_length; ++i) {
-			              $('#'+elements[i]).css('background-color', (array[i] = color_scale[i]));
+			              $('#'+elements[i]).css('background-color', (color_scheme[i] = color_scale[i]));
 			    }    			  
 			    if ($('#chart svg').length > 0) {
-			        alter_color();
+			        alter_color(color_scheme);
 			    }
 			}
-			render_streamgraph();
+			//Initial render
+			render_streamgraph(colorbrewer[document.getElementById('colorList').options[0].value][5]);
         </script>
-         <div id="data_log" style="height:400px;width:800px;overflow:auto;border:1px solid rgb(0, 0, 0)">
+        <div id="data_log" style="height:400px;width:800px;overflow:auto;border:1px solid rgb(0, 0, 0)">
         </div>
         <script type="text/javascript">
         function start_streaming_data(element) {
     		var timestamp = 0;
 		    setInterval(function() {
-		        var data = generator(n, 1);
+		        var data = d3.layout.stack().offset("wiggle")(generator(n, 1));
+		        var size = data0[0].length
+		        for (var i = 0; i < n; i++){
+					data0[i].shift();
+					data0[i].push(data[i][0]);
+		        }
 		        $('#' + element).trigger('data_update', [data, ++timestamp]);
 		    }, 1000);
 		}
 
 		$('#data_log').on('data_update', function(e, data, timestamp) {
 		    $(this).html($(this).html() + 'Timestamp: ' + timestamp + ', Data: ' + JSON.stringify(data) + '<br/>');
+			transition();
 		});
 		start_streaming_data('data_log');
         </script> 
