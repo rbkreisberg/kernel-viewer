@@ -143,7 +143,6 @@ function kde_plot(){
 		return this;
 	}
 	
-	
 	/**
 		Sets the color that the plot(s) are rendered in. Returns the color if no value is passed in.
 	 */	
@@ -269,18 +268,16 @@ function kde_plot(){
 					 .interpolate("basis"))
 				.style("fill","none")
 				.style("stroke","black");
-				g2.append("path")
-					.attr("d", d3.svg.area()
-    							.interpolate("basis")
-    							.y(function(point) {return yScale(point[0]);})
-    							.x0(xScale(0))
-    							.x1(function(point) { return xScale(point[1]);})
-					 			
-					 			)
-					 .style("fill",renderColor)
-					 .style("stroke","none");
-					 
-
+			g2.append("path")
+				.attr("d", d3.svg.area()
+							.interpolate("basis")
+							.y(function(point) {return yScale(point[0]);})
+							.x0(xScale(0))
+							.x1(function(point) { return xScale(point[1]);})
+				 			
+				 			)
+				 .style("fill",renderColor)
+				 .style("stroke","none");					 
 
 			if (renderPoints){
 				g2.append("g")
