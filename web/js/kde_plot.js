@@ -194,13 +194,23 @@ function kde_plot(){
 	 	Sets the width of the object that the plot(s) are rendered in. Returns the width if no value is passed in.
 	 */
 
-	kp.xAxisLabel = function(x){
+	kp.categoryLabels = function(x){
 		if (!arguments.length) return category_label;
 		category_label = x; 
 		return this; 
 	};
 
-	kp.yAxisLabel
+	kp.xAxisLabel = function(x){
+		if (!arguments.length) return xaxis_label;
+		xaxis_label = x; 
+		return this; 
+	};
+
+	kp.yAxisLabel = function(x){
+		if (!arguments.length) return yaxis_label;
+		yaxis_label = x; 
+		return this; 
+	};
 	
 	/**
 	 	Renders the violin plot in the passed in container. If no container is passed in, the plot is rendered in the body.
@@ -342,7 +352,7 @@ function kde_plot(){
 				.attr("dx", -3) // padding-right
 				.attr("text-anchor", "middle") 
 				.attr("text-align", "left") 
-				.text(xaxis_label);
+				.text(yaxis_label);
 	}
 	
 	/**

@@ -17,7 +17,7 @@
         	for (var i = 1; i < 5; i++){
             	data.push(dataGenGaussian(200,400, i*250).filter(function(a) { return a < 700 && a > 100;}));
         	}
-        	var plot = kde_plot().data(data).renderPoints(true).renderCounts(true).renderMedian(true).xAxisLabel(['aaaaaaaaaa','bbbb','cc','dddddddddddd']);
+        	var plot = kde_plot().data(data).renderPoints(true).renderCounts(true).renderMedian(true).categoryLabels(['aaaaaaaaaa','bbbb','cc','dddddddddddd']).xAxisLabel('FOXA1').yAxisLabel('TP53');
             plot('#plot_div');
 		</script>
     </body>
