@@ -11,22 +11,14 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>    
     <body>
-    	<div id='plot_div'></div>
-   		<!--
-   		<button onclick='rotateHeart(heart, 90)'>
-        	Update
-    	</button>
-    	-->
+    	<div id='plot_div'></div> 	
     	<script type="text/javascript">
-    	//var heart = plotHeart(makeHeart(100),250,250);
-    	//plotHeart(makeHeart(100), 250, 250);
-    	//plotHeart(makeHeart(10), 250, 250);
-    	var data = [];
-    	for (var i = 1; i < 5; i++){
-        	data.push(dataGenGaussian(200,400, i*250).filter(function(a) { return a < 700 && a > 100;}));
-    	}
-    	var plot = kde_plot().data(data).renderPoints(true).renderCounts(true).renderMedian(true).xAxisLabel(['aaaaaaaaaa','bbbb','cc','dddddddddddd']);
-        plot('#plot_div');
+        	var data = [];
+        	for (var i = 1; i < 5; i++){
+            	data.push(dataGenGaussian(200,400, i*250).filter(function(a) { return a < 700 && a > 100;}));
+        	}
+        	var plot = kde_plot().data(data).renderPoints(true).renderCounts(true).renderMedian(true).xAxisLabel(['aaaaaaaaaa','bbbb','cc','dddddddddddd']);
+            plot('#plot_div');
 		</script>
     </body>
 </html>
