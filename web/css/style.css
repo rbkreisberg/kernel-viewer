@@ -14,3 +14,8 @@ a {
 	stroke:#333;
 	stroke-opacity:0.7;
 }
+
+.kde_plot .axis_label {
+	font-size:16px;
+	font-weight:bold;
+}

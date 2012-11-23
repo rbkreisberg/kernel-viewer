@@ -9,7 +9,8 @@ function kde_plot(){
 		height = 300,
 		width = 800,
 		numArrays = 1,
-		label = '',
+		category_label = '',
+		xaxis_label = yaxis_label = 'aaa',
 		plotPadding = 20,
 		dataColor = "#00A";
 		
@@ -51,7 +52,7 @@ function kde_plot(){
 			medianArray = new Array(numArrays),
 			min = new Array(numArrays),
 			max = new Array(numArrays), maxY = new Array(numArrays);
-			if (label.length != numArrays) { label = (numArrays === 1 ? '' : new Array(numArrays));}
+			if (category_label.length != numArrays) { category_label = (numArrays === 1 ? '' : new Array(numArrays));}
 			for (var i = 0; i < numArrays; i++){
 				kdeArray[i] = createKDE(x[i]);
 				kdeEstimates[i] = sampleEstimates(kdeArray[i]);
@@ -194,10 +195,12 @@ function kde_plot(){
 	 */
 
 	kp.xAxisLabel = function(x){
-		if (!arguments.length) return label;
-		label = x; 
+		if (!arguments.length) return category_label;
+		category_label = x; 
 		return this; 
 	};
+
+	kp.yAxisLabel
 	
 	/**
 	 	Renders the violin plot in the passed in container. If no container is passed in, the plot is rendered in the body.
@@ -222,7 +225,7 @@ function kde_plot(){
 				 	.style("stroke","#111")
 				 	.call(yAxis);
 		frame.append("svg:text")
-				 	.attr("transform",'translate(0,0)')
+				 	.attr("transform",'translate(0,-'+margin.top/2+')')
 				 	.attr("dx", -3) // padding-right
 				 	.attr("text-anchor","end")
 				 	.attr("text-align","right")
@@ -250,7 +253,7 @@ function kde_plot(){
 				plotData = data[i];
 				plotKDE = kde_estimate[i];
 				plotMedian = median[i];
-				plotLabel = label[i] || '';
+				plotLabel = category_label[i] || '';
 				dataKDE = kde[i](data[i]);
 			} else {
 				dataKDE = kde(data);
@@ -301,7 +304,6 @@ function kde_plot(){
 				.attr("text-anchor", "middle") 
 				.attr("text-align", "left")
 				.text(plotData.length+'');
-
 			}
 			if (renderMedian){
 				g2.append("line")
@@ -312,7 +314,7 @@ function kde_plot(){
 					.style("stroke","black");
 			}
 			g2.append("svg:text")
-				.attr("class","label")
+				.attr("class","category_label")
 				.attr("transform",'translate('+translateFactor/2+',-'+margin.top/2+')')
 				.attr("dx", -3) // padding-right
 				.attr("dy", ".35em") // vertical-align: middle
@@ -324,6 +326,23 @@ function kde_plot(){
 			 	.style("stroke","black")
 			 	.call(xAxis);
 		}
+		//x axis label
+		frame.append("svg:text")
+				.attr("class","axis_label")
+				.attr("transform",'translate('+plotWidth/2+','+(plotHeight+margin.bottom/2)+')')
+				.attr("dx", -3) // padding-right
+				.attr("dy",".35em")
+				.attr("text-anchor", "middle") 
+				.attr("text-align", "left") 
+				.text(xaxis_label);
+		//y axis label
+		frame.append("svg:text")
+				.attr("class","axis_label")
+				.attr("transform",'translate('+(plotWidth+margin.right/2)+','+(plotHeight/2)+'),rotate(-90)')
+				.attr("dx", -3) // padding-right
+				.attr("text-anchor", "middle") 
+				.attr("text-align", "left") 
+				.text(xaxis_label);
 	}
 	
 	/**
