@@ -10,7 +10,7 @@ function kde_plot(){
 		width = 800,
 		numArrays = 1,
 		category_label = '',
-		xaxis_label = yaxis_label = 'aaa',
+		xaxis_label = yaxis_label = '',
 		plotPadding = 20,
 		dataColor = "#00A";
 		
@@ -164,6 +164,13 @@ function kde_plot(){
 		return this; 
 	}
 	
+	
+	kp.dataColor = function(x){
+		if (!arguments.length) return dataColor;
+		dataColor = x; 
+		return this;
+	};
+	
 	/**
  		Sets the height of the object that the plot(s) are rendered in. Returns the height if no value is passed in.
 	 */
@@ -174,12 +181,6 @@ function kde_plot(){
 		return this;
 	}
 
-	kp.dataColor = function(x){
-		if (!arguments.length) return dataColor;
-		dataColor = x; 
-		return this;
-	};
-	
 	/**
 	 	Sets the width of the object that the plot(s) are rendered in. Returns the width if no value is passed in.
 	 */
@@ -275,6 +276,7 @@ function kde_plot(){
 			g2.append("path")
 				//Draws the second half of the violin plot
 			 	.attr("class","path")
+			 		.attr("class","plot_line")
 			 		 .attr("d", d3.svg.line()
 					 .x(function(point) {return xScale(point[1]);})
 					 .y(function(point) {return yScale(point[0]);})
@@ -282,6 +284,7 @@ function kde_plot(){
 				.style("fill","none")
 				.style("stroke","black");
 			g2.append("path")
+				.attr("class","plot_area")
 				.attr("d", d3.svg.area()
 							.interpolate("basis")
 							.y(function(point) {return yScale(point[0]);})
@@ -290,14 +293,25 @@ function kde_plot(){
 				 			
 				 			)
 				 .style("fill",renderColor)
-				 .style("stroke","none");					 
+				 .style("stroke","none");		
+
+			if (renderMedian){
+				g2.append("line")
+					.attr('class','median_line')
+					.attr("y1",yScale(plotMedian))
+					.attr("y2",yScale(plotMedian))
+					.attr("x1",0)
+					.attr("x2",translateFactor)
+					.style("stroke","red")
+					.style('stroke-width',"3");
+			}			 
 
 			if (renderPoints){
 				g2.append("g")
 					.selectAll(".circle")
 				  	.data(plotData)
 				    .enter().append("circle")
-				    .attr("class", "circle")
+				    .attr("class", "data_point")
 				    .attr("cx", function(point,index) {return xScale(Math.random() * dataKDE[index][1]); })
 				    .attr("cy", function(point) {return yScale(point);})
 				    .attr("r", 2)
@@ -307,21 +321,13 @@ function kde_plot(){
 			}
 			if (renderCounts){
 				g2.append("svg:text")
-				.attr("class","label")
+				.attr("class","count_label")
 				.attr("transform",'translate('+translateFactor/2+','+plotHeight+')')
 				.attr("dx", -3) // padding-right
 				.attr("dy", ".35em") // vertical-align: middle
 				.attr("text-anchor", "middle") 
 				.attr("text-align", "left")
 				.text(plotData.length+'');
-			}
-			if (renderMedian){
-				g2.append("line")
-					.attr("y1",yScale(plotMedian))
-					.attr("y2",yScale(plotMedian))
-					.attr("x1",yScale(0))
-					.attr("x2",yScale(0)	)
-					.style("stroke","black");
 			}
 			g2.append("svg:text")
 				.attr("class","category_label")
