@@ -6,18 +6,52 @@
         </title>
         <script src="js/d3.v2.js"></script>
         <script src="js/datagen.js"></script>
-        <script src="js/kde_plot.js"></script>
+        <script src="js/kde_plot.js"></script>        
         <link rel="stylesheet" type="text/css" href="css/style.css">
     </head>    
     <body>
-    	<div id='plot_div'></div> 	
+        Spike        
+    	<div id='plot_div1'></div> 	</br>
+        Gaussian
+        <div id='plot_div2'></div>      </br>
+        Uneven distribution
+        <div id='plot_div3'></div>      </br>
+
     	<script type="text/javascript">
-        	var data = [];
-        	for (var i = 1; i < 5; i++){
-            	data.push(dataGenGaussian(200,400, i*250).filter(function(a) { return a < 700 && a > 100;}));
-        	}
-        	var plot = kde_plot().data(data).renderPoints(true).renderCounts(true).renderMedian(true).categoryLabels(['aaaaaaaaaa','bbbb','cc','dddddddddddd']).xAxisLabel('FOXA1').yAxisLabel('TP53');
-            plot('#plot_div');
-		</script>
+        var data1 = [],
+            data2 = [],
+            data3 = [];
+        var pareto = function (num,alpha) {
+            var i =num;
+            var data = new Array(num);
+            while (i-- >= 0) {
+        
+        var u = Math.random();
+        data[i] =  1.0 / Math.pow((1 - u), 1.0 / alpha);
+    }
+    return data;
+    };
+
+             //messy spike
+        for (var i = 1; i < 5; i++){            	
+                data1.push(pareto(200,5));
+        }
+        var plot1 = kde_plot().data(data1).renderPoints(true).renderCounts(true).renderMedian(true).categoryLabels(['aaaaaaaaaa','bbbb','cc','dddddddddddd']).xAxisLabel('FOXA1').yAxisLabel('TP53');
+        plot1('#plot_div1');
+		
+        for (var i = 1; i < 5; i++){
+                data2.push(dataGenGaussian(200, 0, i*50));
+        }
+        
+        var plot2 = kde_plot().data(data2).renderPoints(true).renderCounts(true).renderMedian(true).categoryLabels(['aaaaaaaaaa','bbbb','cc','dddddddddddd']).xAxisLabel('FOXA1').yAxisLabel('TP53');
+        plot2('#plot_div2');
+
+            //sparse data
+        for (var i = 1; i < 5; i++){
+                data3.push(dataGenGaussian(2 * i, 0, 2));
+        }
+        var plot3 = kde_plot().data(data3).renderPoints(true).renderCounts(true).renderMedian(true).categoryLabels(['aaaaaaaaaa','bbbb','cc','dddddddddddd']).xAxisLabel('FOXA1').yAxisLabel('TP53');
+        plot3('#plot_div3');
+        </script>
     </body>
 </html>
