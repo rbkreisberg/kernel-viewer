@@ -3,11 +3,12 @@
 /** @constructor */
 function kde_plot(){
 	var data = [],
-		kde = createKDE(data),
-		kde_estimate = sampleEstimates(kde)
+		kde,
+		kde_estimate = [];
 		margin = {top:25, bottom:25, left:50, right: 10};
 		height = 300,
 		width = 800,
+		plotHeight = plotWidth = 0,
 		numArrays = 1,
 		category_label = '',
 		xaxis_label = yaxis_label = '',
@@ -26,7 +27,7 @@ function kde_plot(){
 			.range([0,plotHeight]),
 		xAxis = d3.svg.axis()
 			.scale(xScale)
-			.orient("bottom")
+			.orient("top")
 			.ticks(2),
 		yAxis = d3.svg.axis()
 			.scale(yScale)
@@ -78,14 +79,12 @@ function kde_plot(){
 			xScale.domain([d3.max(data,function(a){return a[1];}), 0]);
 			yScale.domain([d3.min(data,function(a){return a[0];}),d3.max(data,function(a){return a[0];})]);
 		}
-			xAxis = d3.svg.axis()
-			.scale(xScale)
-			.orient("bottom")
+			xAxis.scale(xScale)
+			.orient("top")
 			.ticks(2)
 			.tickSize(6,3,0),	
 
-		yAxis = d3.svg.axis()
-			.scale(yScale)
+		yAxis.scale(yScale)
 			.orient("left")
 			.ticks(4)
 			.tickSize(-plotWidth,0,0);
@@ -219,7 +218,7 @@ function kde_plot(){
 	 */
 	 function kp(selector){
 		var root = d3.select("body");
-		if (arguments.length) root = d3.select(selector)
+		if (arguments.length) root = d3.select(selector);
 		var translateFactor = xScale.range()[1];
 		//Creates the frame within which the objects are rendered
 		var frame = root.append("svg")
@@ -229,7 +228,7 @@ function kde_plot(){
 			.append('g')
 			   .attr('transform','translate(' + margin.left + ',' + margin.top + ')')
 			   .attr("height",plotHeight)
-			   .attr("width",plotWidth)
+			   .attr("width",plotWidth);
 		frame.append("g")
 					.attr("class","grid")
 				 	.style("fill","none")
@@ -243,7 +242,7 @@ function kde_plot(){
 					.text("Density");
 		if (renderCounts){
 				frame.append("svg:text")
-				 	.attr("transform",'translate(0,'+plotHeight+')')
+				 	.attr("transform",'translate(0,'+(plotHeight+ margin.bottom/2) + ')')
 				 	.attr("dx", -3) // padding-right
 				 	.attr("dy",".35em")
 				 	.attr("text-anchor","start")
@@ -273,27 +272,30 @@ function kde_plot(){
 				.attr("transform","translate(" + ((plotPadding + translateFactor) * i) + ",0)");
 			var g2 = plot.append("g")
 			 	.data([plotKDE]);
-			g2.append("path")
-				//Draws the second half of the violin plot
-			 	.attr("class","path")
-			 		.attr("class","plot_line")
-			 		 .attr("d", d3.svg.line()
-					 .x(function(point) {return xScale(point[1]);})
-					 .y(function(point) {return yScale(point[0]);})
-					 .interpolate("basis"))
-				.style("fill","none")
-				.style("stroke","black");
-			g2.append("path")
-				.attr("class","plot_area")
-				.attr("d", d3.svg.area()
-							.interpolate("basis")
-							.y(function(point) {return yScale(point[0]);})
-							.x0(xScale(0))
-							.x1(function(point) { return xScale(point[1]);})
-				 			
-				 			)
-				 .style("fill",renderColor)
-				 .style("stroke","none");		
+			
+			if(plotKDE.length >= 4) {
+				g2.append("path")
+					//Draws the second half of the violin plot
+				 	.attr("class","path")
+				 		.attr("class","plot_line")
+				 		 .attr("d", d3.svg.line()
+						 .x(function(point) {return xScale(point[1]);})
+						 .y(function(point) {return yScale(point[0]);})
+						 .interpolate("basis"))
+					.style("fill","none")
+					.style("stroke","black");
+				g2.append("path")
+					.attr("class","plot_area")
+					.attr("d", d3.svg.area()
+								.interpolate("basis")
+								.y(function(point) {return yScale(point[0]);})
+								.x0(xScale(0))
+								.x1(function(point) { return xScale(point[1]);})
+					 			
+					 			)
+					 .style("fill",renderColor)
+					 .style("stroke","none");		
+				}
 
 			if (renderMedian){
 				g2.append("line")
@@ -319,10 +321,11 @@ function kde_plot(){
 				    .style('fill-opacity',0.7)
 				    .style('fill',dataColor);
 			}
+
 			if (renderCounts){
 				g2.append("svg:text")
 				.attr("class","count_label")
-				.attr("transform",'translate('+translateFactor/2+','+plotHeight+')')
+				.attr("transform",'translate('+translateFactor/2+','+(plotHeight+ margin.bottom/2) + ')')
 				.attr("dx", -3) // padding-right
 				.attr("dy", ".35em") // vertical-align: middle
 				.attr("text-anchor", "middle") 
@@ -331,7 +334,7 @@ function kde_plot(){
 			}
 			g2.append("svg:text")
 				.attr("class","category_label")
-				.attr("transform",'translate('+translateFactor/2+',-'+margin.top/2+')')
+				.attr("transform",'translate('+translateFactor/2+','+plotHeight +')')
 				.attr("dx", -3) // padding-right
 				.attr("dy", ".35em") // vertical-align: middle
 				.attr("text-anchor", "middle") 
@@ -345,16 +348,15 @@ function kde_plot(){
 		//x axis label
 		frame.append("svg:text")
 				.attr("class","axis_label")
-				.attr("transform",'translate('+plotWidth/2+','+(plotHeight+margin.bottom/2)+')')
+				.attr("transform",'translate('+plotWidth/2+','+(plotHeight+margin.bottom)+')')
 				.attr("dx", -3) // padding-right
-				.attr("dy",".35em")
 				.attr("text-anchor", "middle") 
 				.attr("text-align", "left") 
 				.text(xaxis_label);
 		//y axis label
 		frame.append("svg:text")
 				.attr("class","axis_label")
-				.attr("transform",'translate('+(plotWidth+margin.right/2)+','+(plotHeight/2)+'),rotate(-90)')
+				.attr("transform",'translate('+(plotWidth+margin.right)+','+(plotHeight/2)+'),rotate(-90)')
 				.attr("dx", -3) // padding-right
 				.attr("text-anchor", "middle") 
 				.attr("text-align", "left") 
@@ -366,16 +368,23 @@ function kde_plot(){
 	   @returns {Array of points} The KDE
 	 */
 	function createKDE(points){
-		var kde = science.stats.kde();
-		kde.sample(points);		
+		var kde = science.stats.kde().sample(points).kernel(science.stats.kernel.gaussian);
 		return kde;
 	}
 
 	function sampleEstimates(kde){
 		var newPoints = [];
 		var data= kde.sample();
-		
+		if (data === undefined) { return [];}
+		if (data.length < 4) { 
+			data.forEach(function(point) { point = [point,0];});
+			return data; 
+		}
+	
 		var variance = science.stats.variance(data);
+		var extent = d3.extent(data);
+		var dataSize = extent[1] - extent[0];
+		if (variance > dataSize){ variance = dataSize;}
 		var stepSize = variance / 100;
 		//Filters the data down to relevant points
 		//20 points over two variances
